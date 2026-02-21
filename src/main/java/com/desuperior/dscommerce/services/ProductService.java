@@ -3,7 +3,6 @@ package com.desuperior.dscommerce.services;
 import com.desuperior.dscommerce.dto.ProductDTO;
 import com.desuperior.dscommerce.entities.Product;
 import com.desuperior.dscommerce.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,12 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class ProductService {
 
-    @Autowired
-    private ProductRepository repository;
+    private final ProductRepository repository;
+
+    public ProductService(ProductRepository repository) {
+        this.repository = repository;
+    }
+
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
@@ -31,6 +34,21 @@ public class ProductService {
 
         Page<Product> result = repository.findAll(pageable);
         return result.map(ProductDTO::new);
+    }
+
+
+    @Transactional
+    public ProductDTO insert(ProductDTO dto) {
+
+        Product entity = new Product();
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+
+        entity = repository.save(entity);
+
+        return new ProductDTO(entity);
     }
 
 
