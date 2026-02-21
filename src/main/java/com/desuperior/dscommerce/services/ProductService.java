@@ -3,6 +3,7 @@ package com.desuperior.dscommerce.services;
 import com.desuperior.dscommerce.dto.ProductDTO;
 import com.desuperior.dscommerce.entities.Product;
 import com.desuperior.dscommerce.repositories.ProductRepository;
+import com.desuperior.dscommerce.services.exceptions.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class ProductService {
     public ProductDTO findById(Long id) {
 
         Product product = repository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado")
+                new ResourceNotFoundException("Product not found with id " + id)
         );
         return new ProductDTO(product);
     }
